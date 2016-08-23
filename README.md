@@ -1,1 +1,1 @@
-# priority-queue
+# Priortiy Queue
