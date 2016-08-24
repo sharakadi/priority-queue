@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication4
 {
-    internal class QueueListAdapter<T> : IList<T>
+    internal class QueueListAdapter<T> : QueueAdapter<T>, IList<T>
     {
         public IEnumerator<T> GetEnumerator()
         {
@@ -65,6 +65,11 @@ namespace ConsoleApplication4
         {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
+        }
+
+        public QueueListAdapter(IQueueContainer<T> queueContainer)
+            : base(queueContainer)
+        {
         }
     }
 }

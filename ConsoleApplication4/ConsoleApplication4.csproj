@@ -41,16 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="IQueueProvider.cs" />
-    <Compile Include="PriorityQueueItemPriority.cs" />
+    <Compile Include="DefaultQueueContainer.cs" />
+    <Compile Include="PriorityQueueExtensions.cs" />
+    <Compile Include="IQueueContainer.cs" />
+    <Compile Include="Priority.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueAdapter.cs" />
     <Compile Include="QueueCollectionAdapter.cs" />
     <Compile Include="QueueListAdapter.cs" />
-    <Compile Include="QueueProvider.cs" />
+    <Compile Include="PriorityQueueProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

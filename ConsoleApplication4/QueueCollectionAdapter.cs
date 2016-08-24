@@ -8,79 +8,53 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication4
 {
-    internal class QueueCollectionAdapter<T> : IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
+    internal class QueueCollectionAdapter<T> : QueueAdapter<T>, IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
     {
-        private readonly PriorityQueueProvider<T> _provider;
         private object _syncRoot;
 
-        private object QueueRoot { get { return _provider.GetSyncRoot(); } }
-
-        private Queue<T> Queue 
-        {
-            get { return _provider.GetQueue(); }
-        }
-
-        public QueueCollectionAdapter(PriorityQueueProvider<T> provider)
-        {
-            _provider = provider;
-        }
-
         public IEnumerator<T> GetEnumerator()
-        {
-            lock (QueueRoot)
-                return Queue.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetQueueEnumerator();
+        }
+
         public void CopyTo(Array array, int index)
         {
-            lock (QueueRoot)
-               Queue.CopyTo((T[])array, index);
+            CopyToArray(array, index);
         }
 
         public void Add(T item)
         {
-            lock (QueueRoot)
-                Queue.Enqueue(item);
+            Enqueue(item);
         }
 
         public void Clear()
         {
-            lock (QueueRoot) Queue.Clear();
+            ClearQueue();
         }
 
         public bool Contains(T item)
         {
-            lock (QueueRoot) return Queue.Contains(item);
+            return ContainsItem(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            lock (QueueRoot) Queue.CopyTo(array, arrayIndex);
+            CopyToArray(array, arrayIndex);
         }
 
         public bool Remove(T item)
         {
-            bool remove = false;
-            lock (QueueRoot)
-            {
-                var arr = Queue.Where(x => !x.Equals(item)).ToArray();
-                if (arr.Length < Queue.Count)
-                {
-                    _provider.SetQueue(new Queue<T>(arr));
-                    remove = true;
-                }
-            }
-            return remove;
+            return RemoveAllOccuriencies(item) > 0;
         }
 
-        int ICollection<T>.Count { get { lock (QueueRoot) return Queue.Count; } }
+        int ICollection<T>.Count { get { return ItemCount; } }
         public bool IsReadOnly { get { return false; } }
-        int ICollection.Count { get { lock (QueueRoot) return Queue.Count; } }
+        int ICollection.Count { get { return ItemCount; } }
         public object SyncRoot
         {
             get
@@ -91,5 +65,10 @@ namespace ConsoleApplication4
             }
         }
         public bool IsSynchronized { get { return true; } }
+
+        public QueueCollectionAdapter(IQueueContainer<T> queueContainer)
+            : base(queueContainer)
+        {
+        }
     }
 }

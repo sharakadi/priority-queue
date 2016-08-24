@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication4
 {
-    public interface IQueueProvider<T>
+    public interface IQueueContainer<T>
     {
         Queue<T> GetQueue();
         object GetSyncRoot();

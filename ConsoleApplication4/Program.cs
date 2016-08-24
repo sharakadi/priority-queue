@@ -49,6 +49,30 @@ namespace ConsoleApplication4
             sw.Stop();
             Console.WriteLine("Time elapsed: {0} ms.", sw.ElapsedMilliseconds);
             File.WriteAllText("d:\\Test.txt", sb.ToString());
+
+
+
+
+
+
+            var q2 = new Queue<int>();
+            var container = new DefaultQueueContainer<int>(q2);
+            lock (container.GetSyncRoot())
+            {
+                container.GetQueue().Enqueue(1000);
+                //container.SetQueue(new Queue<int>());
+            }
+            Console.WriteLine(container.GetQueue().Count);
+
+
+
+
+
+
+
+
+
+
             Console.ReadKey();
         }
     }

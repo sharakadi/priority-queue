@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication4
 {
-    internal class PriorityQueueProvider<T> : IQueueProvider<T>
+    internal class PriorityQueueContainer<T> : IQueueContainer<T>
     {
         private readonly PriorityQueue<T> _priorityQueue;
         private readonly Priority _priority;
@@ -22,7 +22,7 @@ namespace ConsoleApplication4
             return _priorityQueue.GetQueueRoot(_priority);
         }
 
-        public PriorityQueueProvider(PriorityQueue<T> priorityQueue, Priority priority)
+        public PriorityQueueContainer(PriorityQueue<T> priorityQueue, Priority priority)
         {
             _priorityQueue = priorityQueue;
             _priority = priority;
