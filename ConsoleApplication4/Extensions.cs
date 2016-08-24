@@ -11,13 +11,13 @@ namespace ConsoleApplication4
     {
         public static ICollection<T> GetAsICollection<T>(this PriorityQueue<T> priorityQueue, Priority requiredPriority)
         {
-            var provider = new QueueProvider<T>(priorityQueue, requiredPriority);
+            var provider = new PriorityQueueProvider<T>(priorityQueue, requiredPriority);
             return new QueueCollectionAdapter<T>(provider);
         }
 
         public static ICollection GetAsCollection<T>(this PriorityQueue<T> priorityQueue, Priority requiredPriority)
         {
-            var provider = new QueueProvider<T>(priorityQueue, requiredPriority);
+            var provider = new PriorityQueueProvider<T>(priorityQueue, requiredPriority);
             return new QueueCollectionAdapter<T>(provider);
         }
     }

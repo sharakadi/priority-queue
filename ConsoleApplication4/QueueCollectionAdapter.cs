@@ -10,17 +10,17 @@ namespace ConsoleApplication4
 {
     internal class QueueCollectionAdapter<T> : IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
     {
-        private readonly QueueProvider<T> _provider;
+        private readonly PriorityQueueProvider<T> _provider;
         private object _syncRoot;
 
-        private object QueueRoot { get { return _provider.GetRoot(); } }
+        private object QueueRoot { get { return _provider.GetSyncRoot(); } }
 
         private Queue<T> Queue 
         {
             get { return _provider.GetQueue(); }
         }
 
-        public QueueCollectionAdapter(QueueProvider<T> provider)
+        public QueueCollectionAdapter(PriorityQueueProvider<T> provider)
         {
             _provider = provider;
         }
