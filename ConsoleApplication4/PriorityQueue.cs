@@ -10,16 +10,16 @@ namespace ConsoleApplication4
     public class PriorityQueue<T> : IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
     {
         private Queue<T> _lowPriority, _normalPriority, _highPriority;
-        private object _lowRoot, _normalRoot, _highRoot;
+        private readonly object _lowRoot = new object(), _normalRoot = new object(), _highRoot = new object();
         private object _syncRoot;
 
-        public PriorityQueueItemPriority CollectionAddDefaultPriority { get; set; }
+        public Priority CollectionAddDefaultPriority { get; set; }
 
         private void SetSyncRoots()
         {
-            _highRoot = ((ICollection)_highPriority).SyncRoot;
-            _normalRoot = ((ICollection)_normalPriority).SyncRoot;
-            _lowRoot = ((ICollection) _lowPriority).SyncRoot;
+            //_highRoot = ((ICollection)_highPriority).SyncRoot;
+            //_normalRoot = ((ICollection)_normalPriority).SyncRoot;
+            //_lowRoot = ((ICollection) _lowPriority).SyncRoot;
         }
 
         public static PriorityQueue<T> FromCollection(ICollection collection)
@@ -86,23 +86,23 @@ namespace ConsoleApplication4
             lock (_lowRoot) _lowPriority.TrimExcess();
         }
 
-        public void Enqueue(T item, PriorityQueueItemPriority itemPriority)
+        public void Enqueue(T item, Priority itemPriority)
         {
-            if (itemPriority == PriorityQueueItemPriority.Normal)
+            if (itemPriority == Priority.Normal)
             {
                 lock (_normalRoot)
                 {
                     _normalPriority.Enqueue(item);
                 }
             }
-            if (itemPriority == PriorityQueueItemPriority.Low)
+            if (itemPriority == Priority.Low)
             {
                 lock (_lowRoot)
                 {
                     _lowPriority.Enqueue(item);
                 }
             }
-            if (itemPriority == PriorityQueueItemPriority.High)
+            if (itemPriority == Priority.High)
             {
                 lock (_highRoot)
                 {
@@ -351,6 +351,30 @@ namespace ConsoleApplication4
         public bool IsSynchronized
         {
             get { return true; }
+        }
+
+        internal Queue<T> GetQueue(Priority priority)
+        {
+            if (priority == Priority.High) return _highPriority;
+            if (priority == Priority.Normal) return _normalPriority;
+            if (priority == Priority.Low) return _lowPriority;
+            throw new Exception();
+        }
+
+        internal void SetQueue(Priority priority, Queue<T> queue)
+        {
+            if (priority == Priority.High) _highPriority = queue;
+            if (priority == Priority.Normal) _normalPriority = queue;
+            if (priority == Priority.Low) _lowPriority = queue;
+            throw new Exception();            
+        } 
+
+        internal object GetQueueRoot(Priority priority)
+        {
+            if (priority == Priority.High) return _highRoot;
+            if (priority == Priority.Normal) return _normalRoot;
+            if (priority == Priority.Low) return _lowRoot;
+            throw new Exception();
         }
     }
 }

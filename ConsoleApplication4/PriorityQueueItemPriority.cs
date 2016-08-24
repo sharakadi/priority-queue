@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ConsoleApplication4
 {
 
-    public enum PriorityQueueItemPriority
+    public enum Priority
     {
         Normal = 0,
         High = 1,

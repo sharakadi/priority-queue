@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -19,19 +20,20 @@ namespace ConsoleApplication4
                 () =>
                 {
                     for (int i = 0; i < 1000; i++)
-                        q.Enqueue(new Random(i).Next(0, 9), PriorityQueueItemPriority.Low);
+                        q.Enqueue(new Random(i).Next(0, 9), Priority.Low);
                 });
             var addNormal = Task.Run(
                 () =>
                 {
+                    ICollection<int> c = q.GetAsICollection(Priority.Normal);
                     for (int i = 0; i < 1000; i++)
-                        q.Enqueue(new Random(i).Next(100, 199), PriorityQueueItemPriority.Normal);
+                        c.Add(new Random(i).Next(100, 199));
                 });
             var addHigh = Task.Run(
                 () =>
                 {
                     for (int i = 0; i < 1000; i++)
-                        q.Enqueue(new Random(i).Next(1000, 1999), PriorityQueueItemPriority.High);
+                        q.Enqueue(new Random(i).Next(1000, 1999), Priority.High);
                 });
 
             var sb = new StringBuilder();
