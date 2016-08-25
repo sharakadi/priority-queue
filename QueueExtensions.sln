@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication4", "ConsoleApplication4\ConsoleApplication4.csproj", "{2FAF2547-01BF-4FBC-989D-D18E0FC07E68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueueExtensions", "ConsoleApplication4\QueueExtensions.csproj", "{2FAF2547-01BF-4FBC-989D-D18E0FC07E68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueueExtensions.UnitTests", "QueueExtensions.UnitTests\QueueExtensions.UnitTests.csproj", "{B8E64434-B042-48A3-A03D-ECDC3D6F5DC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{2FAF2547-01BF-4FBC-989D-D18E0FC07E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FAF2547-01BF-4FBC-989D-D18E0FC07E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FAF2547-01BF-4FBC-989D-D18E0FC07E68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8E64434-B042-48A3-A03D-ECDC3D6F5DC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8E64434-B042-48A3-A03D-ECDC3D6F5DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8E64434-B042-48A3-A03D-ECDC3D6F5DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8E64434-B042-48A3-A03D-ECDC3D6F5DC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

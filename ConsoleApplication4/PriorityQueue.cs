@@ -11,7 +11,7 @@ namespace ConsoleApplication4
     {
         private Queue<T> _lowPriority, _normalPriority, _highPriority;
         private readonly object _lowRoot = new object(), _normalRoot = new object(), _highRoot = new object();
-        private object _syncRoot;
+        private volatile object _syncRoot;
 
         public Priority CollectionAddDefaultPriority { get; set; }
 
