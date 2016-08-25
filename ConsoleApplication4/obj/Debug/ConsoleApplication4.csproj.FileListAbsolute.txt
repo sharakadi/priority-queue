@@ -5,3 +5,9 @@ E:\GIT\priority-queue\ConsoleApplication4\obj\Debug\ConsoleApplication4.pdb
 E:\GIT\priority-queue\ConsoleApplication4\bin\Debug\ConsoleApplication4.exe
 E:\GIT\priority-queue\ConsoleApplication4\bin\Debug\ConsoleApplication4.pdb
 E:\GIT\priority-queue\ConsoleApplication4\obj\Debug\ConsoleApplication4.csprojResolveAssemblyReference.cache
+D:\GIT\priority-queue\ConsoleApplication4\bin\Debug\ConsoleApplication4.exe.config
+D:\GIT\priority-queue\ConsoleApplication4\obj\Debug\ConsoleApplication4.exe
+D:\GIT\priority-queue\ConsoleApplication4\obj\Debug\ConsoleApplication4.pdb
+D:\GIT\priority-queue\ConsoleApplication4\bin\Debug\ConsoleApplication4.exe
+D:\GIT\priority-queue\ConsoleApplication4\bin\Debug\ConsoleApplication4.pdb
+D:\GIT\priority-queue\ConsoleApplication4\obj\Debug\ConsoleApplication4.csprojResolveAssemblyReference.cache

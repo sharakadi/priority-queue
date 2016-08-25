@@ -364,9 +364,9 @@ namespace ConsoleApplication4
         internal void SetQueue(Priority priority, Queue<T> queue)
         {
             if (priority == Priority.High) _highPriority = queue;
-            if (priority == Priority.Normal) _normalPriority = queue;
-            if (priority == Priority.Low) _lowPriority = queue;
-            throw new Exception();            
+            else if (priority == Priority.Normal) _normalPriority = queue;
+            else if (priority == Priority.Low) _lowPriority = queue;
+            else throw new Exception();            
         } 
 
         internal object GetQueueRoot(Priority priority)

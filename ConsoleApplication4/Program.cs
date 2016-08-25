@@ -36,6 +36,16 @@ namespace ConsoleApplication4
                         q.Enqueue(new Random(i).Next(1000, 1999), Priority.High);
                 });
 
+            Thread.Sleep(100);
+
+            IList<int> list = q.GetAsIList(Priority.High);
+            list.Add(9999);
+            list.Add(99999);
+            var e = list[1];
+            list[1] = -1;
+            list.Insert(2, -10);
+            list.RemoveAt(2);
+
             var sb = new StringBuilder();
             while (!addLow.IsCompleted || !addNormal.IsCompleted || !addHigh.IsCompleted || q.Count > 0)
             {
@@ -49,10 +59,6 @@ namespace ConsoleApplication4
             sw.Stop();
             Console.WriteLine("Time elapsed: {0} ms.", sw.ElapsedMilliseconds);
             File.WriteAllText("d:\\Test.txt", sb.ToString());
-
-
-
-
 
 
             var q2 = new Queue<int>();

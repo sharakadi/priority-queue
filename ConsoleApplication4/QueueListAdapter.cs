@@ -11,7 +11,7 @@ namespace ConsoleApplication4
     {
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetQueueEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -21,50 +21,50 @@ namespace ConsoleApplication4
 
         public void Add(T item)
         {
-            throw new NotImplementedException();
+            Enqueue(item);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            ClearQueue();
         }
 
         public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            return ContainsItem(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            CopyToArray(array, arrayIndex);
         }
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            return RemoveAllOccuriencies(item) > 0;
         }
 
-        public int Count { get; private set; }
-        public bool IsReadOnly { get; private set; }
+        public int Count { get { return ItemCount; }}
+        public bool IsReadOnly { get { return false; }}
         public int IndexOf(T item)
         {
-            throw new NotImplementedException();
+            return GetIndexOfFirstElement(item);
         }
 
         public void Insert(int index, T item)
         {
-            throw new NotImplementedException();
+            InsertElementAt(index, item);
         }
 
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            RemoveElementAt(index);
         }
 
         public T this[int index]
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return GetElementAt(index); }
+            set { SetElementValueAt(index, value); }
         }
 
         public QueueListAdapter(IQueueContainer<T> queueContainer)
