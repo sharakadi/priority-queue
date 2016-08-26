@@ -72,9 +72,16 @@ namespace QueueExtensions.UnitTests
             Enqueue(queue, Priority.Normal, items);
             Assert.AreEqual(10, queue.Count, 0);
 
-            var collection = queue.GetAsICollection(Priority.Normal);
-            collection.Add(new Item() {Name="COLLECTION", TimeStamp = DateTime.Now});
+            queue.CollectionAddDefaultPriority = Priority.High;
+            var collection = (ICollection<Item>) queue;
+            var newItem = new Item() {Name = "COLLECTION", TimeStamp = DateTime.Now};
+            collection.Add(newItem);
             Assert.AreEqual(11, queue.Count, 0);
+
+            Item dequeuedItem = null;
+            dequeuedItem = queue.Dequeue();
+            Assert.AreSame(newItem, dequeuedItem);
+            Assert.AreEqual(10, collection.Count, 0);
         }
     }
 }

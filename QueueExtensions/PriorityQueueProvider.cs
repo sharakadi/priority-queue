@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using ConsoleApplication4;
 
-namespace ConsoleApplication4
+namespace QueueExtensions
 {
     internal class PriorityQueueContainer<T> : IQueueContainer<T>
     {

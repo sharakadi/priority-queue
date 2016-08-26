@@ -11,7 +11,6 @@ namespace ConsoleApplication4
     {
         private Queue<T> _lowPriority, _normalPriority, _highPriority;
         private readonly object _lowRoot = new object(), _normalRoot = new object(), _highRoot = new object();
-        private volatile object _syncRoot;
 
         public Priority CollectionAddDefaultPriority { get; set; }
 
@@ -67,6 +66,7 @@ namespace ConsoleApplication4
             _lowPriority = new Queue<T>();
             _normalPriority = new Queue<T>();
             _highPriority = new Queue<T>();
+            SyncRoot = new object();
             SetSyncRoots();
         }
 
@@ -76,6 +76,7 @@ namespace ConsoleApplication4
             _lowPriority = new Queue<T>(oneThird);
             _normalPriority = new Queue<T>(oneThird);
             _highPriority = new Queue<T>(oneThird);
+            SyncRoot = new object();
             SetSyncRoots();
         }
 
@@ -336,17 +337,9 @@ namespace ConsoleApplication4
             }
         }
 
-        public bool IsReadOnly { get; private set; }
+        public bool IsReadOnly { get { return false; } }
 
-        public object SyncRoot
-        {
-            get
-            {
-                if (_syncRoot == null)
-                    _syncRoot = Interlocked.CompareExchange<Object>(ref _syncRoot, new object(), null);
-                return _syncRoot;
-            }
-        }
+        public object SyncRoot { get; private set; }
 
         public bool IsSynchronized
         {

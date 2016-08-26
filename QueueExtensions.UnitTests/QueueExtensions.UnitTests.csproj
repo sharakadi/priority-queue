@@ -50,7 +50,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleApplication4\QueueExtensions.csproj">
+    <ProjectReference Include="..\QueueExtensions\QueueExtensions.csproj">
       <Project>{2faf2547-01bf-4fbc-989d-d18e0fc07e68}</Project>
       <Name>QueueExtensions</Name>
     </ProjectReference>
