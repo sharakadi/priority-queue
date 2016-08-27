@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using ConsoleApplication4;
 using NUnit.Framework;
 
 namespace QueueExtensions.UnitTests
@@ -46,26 +47,32 @@ namespace QueueExtensions.UnitTests
                 item2 = new Item() {Name = "TEST-NORMAL", TimeStamp = DateTime.Now},
                 item3 = new Item() {Name = "TEST-LOW", TimeStamp = DateTime.Now};
 
-            queue.Enqueue(item1, Priority.High);
-            queue.Enqueue(item2, Priority.Normal);
-            queue.Enqueue(item3, Priority.Low);
+            lock (queue.SyncRoot)
+            {
+                Assert.AreEqual(true, Monitor.IsEntered(queue.SyncRoot));
 
-            Assert.AreEqual(3, queue.Count, 0);
+                queue.Enqueue(item1, Priority.High);
+                queue.Enqueue(item2, Priority.Normal);
+                queue.Enqueue(item3, Priority.Low);
 
-            dequeuedItem = queue.Dequeue();
-            Assert.AreSame(item1, dequeuedItem);
+                Assert.AreEqual(3, queue.Count, 0);
 
-            dequeuedItem = queue.Dequeue();
-            Assert.AreSame(item2, dequeuedItem);
+                dequeuedItem = queue.Dequeue();
+                Assert.AreSame(item1, dequeuedItem);
 
-            dequeuedItem = queue.Dequeue();
-            Assert.AreSame(item3, dequeuedItem);
+                dequeuedItem = queue.Dequeue();
+                Assert.AreSame(item2, dequeuedItem);
 
-            Assert.AreEqual(0, queue.Count, 0);
+                dequeuedItem = queue.Dequeue();
+                Assert.AreSame(item3, dequeuedItem);
+
+                Assert.AreEqual(0, queue.Count, 0);
+            }
+            Assert.AreEqual(false, Monitor.IsEntered(queue.SyncRoot));
         }
 
         [TestCase]
-        public void CollectionTest()
+        public void QueueAsCollectionTest()
         {
             var queue = new PriorityQueue<Item>();
             var items = CreateItems(10);
@@ -74,14 +81,127 @@ namespace QueueExtensions.UnitTests
 
             queue.CollectionAddDefaultPriority = Priority.High;
             var collection = (ICollection<Item>) queue;
-            var newItem = new Item() {Name = "COLLECTION", TimeStamp = DateTime.Now};
-            collection.Add(newItem);
-            Assert.AreEqual(11, queue.Count, 0);
+            Assert.AreSame(queue.SyncRoot, ((ICollection)queue).SyncRoot);
 
-            Item dequeuedItem = null;
-            dequeuedItem = queue.Dequeue();
-            Assert.AreSame(newItem, dequeuedItem);
-            Assert.AreEqual(10, collection.Count, 0);
+            lock (((ICollection)queue).SyncRoot)
+            {
+                Assert.AreEqual(true, Monitor.IsEntered(((ICollection)queue).SyncRoot));
+                Assert.AreEqual(true, Monitor.IsEntered(queue.SyncRoot));
+
+                var newItem = new Item() {Name = "COLLECTION", TimeStamp = DateTime.Now};
+                collection.Add(newItem);
+                Assert.AreEqual(11, queue.Count, 0);
+
+                Item dequeuedItem = null;
+                dequeuedItem = queue.Dequeue();
+                Assert.AreSame(newItem, dequeuedItem);
+                Assert.AreEqual(10, collection.Count, 0);
+            }
+
+            Assert.AreEqual(false, Monitor.IsEntered(((ICollection)queue).SyncRoot));
+            Assert.AreEqual(false, Monitor.IsEntered(queue.SyncRoot));
+        }
+
+        [TestCase]
+        public void QueueContainerTest()
+        {
+            var queue = new Queue<Item>();
+            IQueueContainer<Item> container = new DefaultQueueContainer<Item>(queue);
+          
+            Assert.AreSame(queue, container.GetQueue());
+            Assert.AreNotSame(((ICollection) queue).SyncRoot, container.GetSyncRoot());
+
+            lock (container.GetSyncRoot())
+            {
+                Assert.AreEqual(true, Monitor.IsEntered(container.GetSyncRoot()));
+            }
+            Assert.AreEqual(false, Monitor.IsEntered(container.GetSyncRoot()));
+
+            container.SetQueue(new Queue<Item>());
+            Assert.AreNotSame(queue, container.GetQueue());
+        }
+
+        [TestCase]
+        public void CollectionAdapterTest()
+        {
+            var queue = new Queue<Item>();
+            Item[] items = CreateItems(3);
+
+            IQueueContainer<Item> container = new DefaultQueueContainer<Item>(queue);
+            var collection = new QueueCollectionAdapter<Item>(container);
+
+            Assert.NotNull(collection as ICollection);
+            Assert.NotNull(collection as ICollection<Item>);
+
+            var iCollection = (ICollection<Item>) collection;
+
+            lock (((ICollection)iCollection).SyncRoot)
+            {
+                Assert.AreEqual(true, Monitor.IsEntered(((ICollection)iCollection).SyncRoot));
+                Assert.AreEqual(container.GetSyncRoot(), ((ICollection)iCollection).SyncRoot);
+                
+                iCollection.Add(items[0]);
+                iCollection.Add(items[1]);
+                iCollection.Add(items[2]);
+                Assert.AreEqual(3, iCollection.Count, 0);
+                Assert.AreEqual(3, container.GetQueue().Count, 0);
+
+                Assert.AreEqual(true, iCollection.Contains(items[0]));
+                Assert.AreEqual(true, iCollection.Contains(items[1]));
+                Assert.AreEqual(true, iCollection.Contains(items[2]));
+
+                queue.Dequeue();
+                queue.Dequeue();
+                queue.Dequeue();
+
+                Assert.AreEqual(0, iCollection.Count, 0);
+            }
+
+            Assert.AreEqual(false, Monitor.IsEntered(((ICollection)iCollection).SyncRoot));
+        }
+
+        [TestCase]
+        public void ListAdapterTest()
+        {
+            var queue = new Queue<Item>();
+            Item[] items = CreateItems(3);
+
+            IQueueContainer<Item> container = new DefaultQueueContainer<Item>(queue);
+            var list = new QueueListAdapter<Item>(container);
+
+            Assert.NotNull(list as IList<Item>);
+
+            var iList = (IList<Item>) list;
+            list.Add(items[0]);
+            list.Add(items[1]);
+            list.Add(items[2]);
+            Assert.AreEqual(3, list.Count, 0);
+            Assert.AreEqual(list.Count, queue.Count, 0);
+
+            Assert.AreEqual(queue.ToArray(), list.ToArray());
+            Assert.AreSame(items[0], iList[0]);
+            Assert.AreSame(items[1], iList[1]);
+            Assert.AreSame(items[2], iList[2]);
+
+            items[1].Name = "EDIT";
+
+            Assert.AreSame(items[1], iList[1]);
+            Assert.AreEqual(queue.ToArray(), list.ToArray());
+
+            iList.RemoveAt(1);
+            queue = container.GetQueue();
+            Assert.AreEqual(2, iList.Count, 0);
+            Assert.AreEqual(list.Count, queue.Count);
+            Assert.AreEqual(queue.ToArray(), list.ToArray());
+
+            iList.Insert(1, items[1]);
+            queue = container.GetQueue();
+            Assert.AreEqual(3, iList.Count, 0);
+            Assert.AreEqual(list.Count, queue.Count);
+            Assert.AreEqual(queue.ToArray(), list.ToArray());
+            Assert.AreSame(items[0], iList[0]);
+            Assert.AreSame(items[1], iList[1]);
+            Assert.AreSame(items[2], iList[2]);
         }
     }
 }

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleApplication4
+namespace QueueExtensions
 {
     public class DefaultQueueContainer<T> : IQueueContainer<T>
     {
         private Queue<T> _queue;
+        private readonly object _syncRoot = new object();
 
         public DefaultQueueContainer(Queue<T> queue)
         {
@@ -23,7 +20,8 @@ namespace ConsoleApplication4
 
         public object GetSyncRoot()
         {
-            return ((ICollection) _queue).SyncRoot;
+            //return ((ICollection) _queue).SyncRoot;
+            return _syncRoot;
         }
 
         public void SetQueue(Queue<T> queue)

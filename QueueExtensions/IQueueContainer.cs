@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace ConsoleApplication4
+namespace QueueExtensions
 {
     /// <summary>
     /// Контейнер для стандартной очереди .NET (System.Collections.Generic.Queue). Предоставляет возможности получения объекта коллекции, синхронизации и обновление коллекции

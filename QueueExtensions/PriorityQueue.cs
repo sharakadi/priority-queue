@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Threading;
 
-namespace ConsoleApplication4
+namespace QueueExtensions
 {
     public class PriorityQueue<T> : IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
     {

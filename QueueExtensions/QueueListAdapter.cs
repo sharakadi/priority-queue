@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleApplication4
+namespace QueueExtensions
 {
-    internal class QueueListAdapter<T> : QueueAdapter<T>, IList<T>
+    public  class QueueListAdapter<T> : QueueAdapter<T>, IList<T>
     {
         public IEnumerator<T> GetEnumerator()
         {

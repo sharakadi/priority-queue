@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ConsoleApplication4
+namespace QueueExtensions
 {
-    internal class QueueCollectionAdapter<T> : QueueAdapter<T>, IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
+    public class QueueCollectionAdapter<T> : QueueAdapter<T>, IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
     {
         private object _syncRoot;
 
@@ -55,20 +51,15 @@ namespace ConsoleApplication4
         int ICollection<T>.Count { get { return ItemCount; } }
         public bool IsReadOnly { get { return false; } }
         int ICollection.Count { get { return ItemCount; } }
-        public object SyncRoot
-        {
-            get
-            {
-                if (_syncRoot == null)
-                    _syncRoot = Interlocked.CompareExchange<Object>(ref _syncRoot, new object(), null);
-                return _syncRoot;
-            }
+        public new object SyncRoot {
+            get { return base.SyncRoot; }
         }
         public bool IsSynchronized { get { return true; } }
 
         public QueueCollectionAdapter(IQueueContainer<T> queueContainer)
             : base(queueContainer)
         {
+            //SyncRoot = new object();
         }
     }
 }

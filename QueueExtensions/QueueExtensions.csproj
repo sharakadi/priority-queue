@@ -54,7 +54,7 @@
     <Compile Include="QueueAdapter.cs" />
     <Compile Include="QueueCollectionAdapter.cs" />
     <Compile Include="QueueListAdapter.cs" />
-    <Compile Include="PriorityQueueProvider.cs" />
+    <Compile Include="PriorityQueueContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

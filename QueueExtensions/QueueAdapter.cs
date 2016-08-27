@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleApplication4
+namespace QueueExtensions
 {
     /// <summary>
     /// Абстрактный класс, предоставляющий доступ к очереди с возможностями ее модификации: вставку, удаление, замену элементов и т.д., в т.ч. по индексу
@@ -14,7 +11,7 @@ namespace ConsoleApplication4
     public abstract class QueueAdapter<T>
     {
         private readonly IQueueContainer<T> _queueContainer;
-        private object SyncRoot { get { return _queueContainer.GetSyncRoot(); } }
+        protected object SyncRoot { get { return _queueContainer.GetSyncRoot(); } }
         private Queue<T> Queue { get { return _queueContainer.GetQueue(); } set { _queueContainer.SetQueue(value); } }
 
         public QueueAdapter(IQueueContainer<T> queueContainer)
@@ -95,7 +92,7 @@ namespace ConsoleApplication4
                 if (index < 0 || index > array.Length-1) throw new IndexOutOfRangeException();
                 var newArray = new T[array.Length + 1];
                 Array.Copy(array, 0, newArray, 0, index);
-                Array.Copy(array, index + 1, newArray, index + 1, array.Length - index - 1);
+                Array.Copy(array, index, newArray, index + 1, array.Length - index);
                 newArray[index] = item;
                 Queue = new Queue<T>(newArray);                
             }
