@@ -67,5 +67,10 @@ namespace QueueExtensions
             : base(queueContainer)
         {
         }
+
+        public new object SyncRoot
+        {
+            get { return base.SyncRoot; }
+        }
     }
 }

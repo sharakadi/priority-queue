@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -18,6 +19,14 @@ namespace QueueExtensions.UnitTests
         {
             public string Name { get; set; }
             public DateTime TimeStamp { get; set; }
+        }
+
+        private void AssertContainsSubcollection(ICollection collection, ICollection subcollection)
+        {
+            foreach (var item in subcollection)
+            {
+                Assert.Contains(item, collection);
+            }
         }
 
         private Item[] CreateItems(int count)
@@ -145,6 +154,7 @@ namespace QueueExtensions.UnitTests
                 iCollection.Add(items[2]);
                 Assert.AreEqual(3, iCollection.Count, 0);
                 Assert.AreEqual(3, container.GetQueue().Count, 0);
+                Assert.AreEqual(queue.ToArray(), iCollection.ToArray());
 
                 Assert.AreEqual(true, iCollection.Contains(items[0]));
                 Assert.AreEqual(true, iCollection.Contains(items[1]));
@@ -202,6 +212,89 @@ namespace QueueExtensions.UnitTests
             Assert.AreSame(items[0], iList[0]);
             Assert.AreSame(items[1], iList[1]);
             Assert.AreSame(items[2], iList[2]);
+        }
+
+        [TestCase]
+        public void PriorityQueueParallelTest()
+        {
+            var queue = new PriorityQueue<Item>();
+            var high = CreateItems(100000);
+            var normal = CreateItems(100000);
+            var low = CreateItems(100000);
+            var total = high.Length + normal.Length + low.Length;
+            var sw = Stopwatch.StartNew();
+
+            var highTask = Task.Run(() =>
+            {
+                Console.WriteLine("highTask ID#{0}", Thread.CurrentThread.ManagedThreadId);
+                foreach (var i in Enumerable.Range(0, high.Length))
+                {
+                    queue.Enqueue(high[i], Priority.High);
+                }
+            });
+            var removeTask = Task.Run(() =>
+            {
+                Console.WriteLine("removeTask ID#{0}", Thread.CurrentThread.ManagedThreadId);
+                while (queue.Count < 100) { }
+                var list = queue.GetAsIList(Priority.Normal);
+                for (int j = 0; j < normal.Length; j++)
+                {
+                    lock (((QueueListAdapter<Item>)list).SyncRoot)
+                    {
+                        if (j > queue.Count || queue.Count == 0) continue;
+                        if (j%10 == 0) list.RemoveAt(j);
+                    }
+                }
+            });
+            var normalTask = Task.Run(() =>
+            {
+                Console.WriteLine("normalTask ID#{0}", Thread.CurrentThread.ManagedThreadId);
+                var collection = queue.GetAsICollection(Priority.Normal);
+                foreach (var i in Enumerable.Range(0, normal.Length))
+                {
+                    collection.Add(normal[i]);
+                }
+            });
+            var lowTask = Task.Run(() =>
+            {
+                Console.WriteLine("lowTask ID#{0}", Thread.CurrentThread.ManagedThreadId);
+                var list = queue.GetAsIList(Priority.Low);
+                foreach (var i in Enumerable.Range(0, low.Length))
+                {
+                    list.Add(low[i]);
+                }
+            });
+
+            List<Item> dequeued = new List<Item>(total);
+            while (!highTask.IsCompleted || !normalTask.IsCompleted || !lowTask.IsCompleted || !removeTask.IsCompleted ||
+                   queue.Count > 0)
+            {
+                if (highTask.Exception != null) throw highTask.Exception;
+                if (normalTask.Exception != null) throw normalTask.Exception;
+                if (lowTask.Exception != null) throw lowTask.Exception;
+                if (queue.Count > 0)
+                    dequeued.Add(queue.Dequeue());
+            }
+
+            sw.Stop();
+            Console.WriteLine("Time elapsed: {0} ms.", sw.ElapsedMilliseconds);
+
+            Assert.AreEqual(0, queue.Count, 0);
+            Assert.AreNotEqual(total, dequeued.Count);
+            AssertContainsSubcollection(dequeued, high);
+            AssertContainsSubcollection(dequeued, normal);
+            AssertContainsSubcollection(dequeued, low);
+        }
+
+        [TestCase]
+        public void AdaptersParallelTest()
+        {
+            //Assert.Inconclusive();
+            var queue = new Queue<Item>();
+
+            var container = new DefaultQueueContainer<Item>(queue);
+
+
         }
     }
 }
