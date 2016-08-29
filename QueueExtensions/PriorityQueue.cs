@@ -354,11 +354,20 @@ namespace QueueExtensions
 
         internal void SetQueue(Priority priority, Queue<T> queue)
         {
-            if (priority == Priority.High) _highPriority = queue;
-            else if (priority == Priority.Normal) _normalPriority = queue;
-            else if (priority == Priority.Low) _lowPriority = queue;
-            else throw new Exception();            
-        } 
+            if (priority == Priority.High)
+            {
+                lock (_highRoot) _highPriority = queue;
+            }
+            else if (priority == Priority.Normal)
+            {
+                lock (_normalRoot) _normalPriority = queue;
+            }
+            else if (priority == Priority.Low)
+            {
+                lock (_lowRoot) _lowPriority = queue;
+            }
+            else throw new Exception();
+        }
 
         internal object GetQueueRoot(Priority priority)
         {
