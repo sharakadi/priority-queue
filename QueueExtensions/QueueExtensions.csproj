@@ -49,7 +49,6 @@
     <Compile Include="IQueueContainer.cs" />
     <Compile Include="Priority.cs" />
     <Compile Include="PriorityQueue.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueAdapter.cs" />
     <Compile Include="QueueCollectionAdapter.cs" />

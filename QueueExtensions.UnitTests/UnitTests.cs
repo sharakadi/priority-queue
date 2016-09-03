@@ -21,12 +21,11 @@ namespace QueueExtensions.UnitTests
             public DateTime TimeStamp { get; set; }
         }
 
-        private void AssertContainsSubcollection(ICollection collection, ICollection subcollection)
+        internal class DoesNotContainsSubcollectionException : Exception { }
+
+        private void ContainsSubcollection<T>(ICollection collection, ICollection subcollection)
         {
-            foreach (var item in subcollection)
-            {
-                Assert.Contains(item, collection);
-            }
+            if (collection.Cast<T>().Intersect(subcollection.Cast<T>()).Count() != subcollection.Count) throw new DoesNotContainsSubcollectionException();
         }
 
         private Item[] CreateItems(int count)
@@ -229,7 +228,8 @@ namespace QueueExtensions.UnitTests
                 Console.WriteLine("highTask ID#{0}", Thread.CurrentThread.ManagedThreadId);
                 foreach (var i in Enumerable.Range(0, high.Length))
                 {
-                    queue.Enqueue(high[i], Priority.High);
+                    lock (queue.SyncRoot)
+                        queue.Enqueue(high[i], Priority.High);
                 }
             });
             var removeTask = Task.Run(() =>
@@ -241,7 +241,7 @@ namespace QueueExtensions.UnitTests
                 {
                     lock (((QueueListAdapter<Item>)list).SyncRoot)
                     {
-                        if (j > queue.Count || queue.Count == 0) continue;
+                        if (j > list.Count || list.Count == 0) continue;
                         if (j%10 == 0) list.RemoveAt(j);
                     }
                 }
@@ -281,9 +281,9 @@ namespace QueueExtensions.UnitTests
 
             Assert.AreEqual(0, queue.Count, 0);
             Assert.AreNotEqual(total, dequeued.Count);
-            AssertContainsSubcollection(dequeued, high);
-            AssertContainsSubcollection(dequeued, normal);
-            AssertContainsSubcollection(dequeued, low);
+            Assert.DoesNotThrow(() => ContainsSubcollection<Item>(dequeued, high));
+            Assert.DoesNotThrow(() => ContainsSubcollection<Item>(dequeued, normal));
+            Assert.DoesNotThrow(() => ContainsSubcollection<Item>(dequeued, low));
         }
 
         [TestCase]

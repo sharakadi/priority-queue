@@ -9,15 +9,7 @@ namespace QueueExtensions
     {
         private Queue<T> _lowPriority, _normalPriority, _highPriority;
         private readonly object _lowRoot = new object(), _normalRoot = new object(), _highRoot = new object();
-
         public Priority CollectionAddDefaultPriority { get; set; }
-
-        private void SetSyncRoots()
-        {
-            //_highRoot = ((ICollection)_highPriority).SyncRoot;
-            //_normalRoot = ((ICollection)_normalPriority).SyncRoot;
-            //_lowRoot = ((ICollection) _lowPriority).SyncRoot;
-        }
 
         public static PriorityQueue<T> FromCollection(ICollection collection)
         {
@@ -25,7 +17,6 @@ namespace QueueExtensions
             collection.CopyTo(arr, 0);
             var q = new PriorityQueue<T>(arr.Length * 3);
             q._normalPriority = new Queue<T>(arr);
-            q.SetSyncRoots();
             return q;
         }
 
@@ -44,7 +35,6 @@ namespace QueueExtensions
                 _highPriority = new Queue<T>(highArr),
                 _normalPriority = new Queue<T>(normalArr)
             };
-            q.SetSyncRoots();
             return q;
         }
 
@@ -55,7 +45,6 @@ namespace QueueExtensions
             if (highPriorityQueue != null) q._highPriority = highPriorityQueue;
             if (normalPriorityQueue != null) q._normalPriority = normalPriorityQueue;
             if (lowPriorityQueue != null) q._lowPriority = lowPriorityQueue;
-            q.SetSyncRoots();
             return q;
         }
 
@@ -65,7 +54,6 @@ namespace QueueExtensions
             _normalPriority = new Queue<T>();
             _highPriority = new Queue<T>();
             SyncRoot = new object();
-            SetSyncRoots();
         }
 
         public PriorityQueue(int totalCapacity)
@@ -75,7 +63,6 @@ namespace QueueExtensions
             _normalPriority = new Queue<T>(oneThird);
             _highPriority = new Queue<T>(oneThird);
             SyncRoot = new object();
-            SetSyncRoots();
         }
 
         public void TrimExcess()
