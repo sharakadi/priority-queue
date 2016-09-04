@@ -282,18 +282,15 @@ namespace QueueExtensions.UnitTests
             Assert.AreEqual(0, queue.Count, 0);
             Assert.AreNotEqual(total, dequeued.Count);
             Assert.DoesNotThrow(() => ContainsSubcollection<Item>(dequeued, high));
-            Assert.DoesNotThrow(() => ContainsSubcollection<Item>(dequeued, normal));
+            Assert.Throws(typeof(DoesNotContainsSubcollectionException), () => ContainsSubcollection<Item>(dequeued, normal));
             Assert.DoesNotThrow(() => ContainsSubcollection<Item>(dequeued, low));
         }
 
         [TestCase]
         public void AdaptersParallelTest()
         {
-            //Assert.Inconclusive();
             var queue = new Queue<Item>();
-
             var container = new DefaultQueueContainer<Item>(queue);
-
 
         }
     }
