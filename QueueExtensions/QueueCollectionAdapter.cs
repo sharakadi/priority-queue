@@ -6,11 +6,9 @@ namespace QueueExtensions
 {
     public class QueueCollectionAdapter<T> : QueueAdapter<T>, IEnumerable<T>, IEnumerable, ICollection, ICollection<T>
     {
-        private object _syncRoot;
-
         public IEnumerator<T> GetEnumerator()
         {
-            return GetEnumerator();
+            return GetQueueEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -56,7 +54,7 @@ namespace QueueExtensions
         }
         public bool IsSynchronized { get { return true; } }
 
-        public QueueCollectionAdapter(IQueueContainer<T> queueContainer)
+        public QueueCollectionAdapter(IQueueContainer<T> queueContainer, object syncRoot)
             : base(queueContainer)
         {
             //SyncRoot = new object();
