@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -235,14 +236,13 @@ namespace QueueExtensions.UnitTests
             var removeTask = Task.Run(() =>
             {
                 Console.WriteLine("removeTask ID#{0}", Thread.CurrentThread.ManagedThreadId);
-                while (queue.Count < 100) { }
                 var list = queue.GetAsIList(Priority.Normal);
-                for (int j = 0; j < normal.Length; j++)
+                for (int j = 0; j < normal.Length / 2; j++)
                 {
                     lock (((QueueListAdapter<Item>)list).SyncRoot)
                     {
-                        if (j > list.Count || list.Count == 0) continue;
-                        if (j%10 == 0) list.RemoveAt(j);
+                        if (list.Count == 0) continue;
+                        if (j%10 == 0) list.RemoveAt(0);
                     }
                 }
             });
@@ -269,15 +269,20 @@ namespace QueueExtensions.UnitTests
             while (!highTask.IsCompleted || !normalTask.IsCompleted || !lowTask.IsCompleted || !removeTask.IsCompleted ||
                    queue.Count > 0)
             {
-                if (highTask.Exception != null) throw highTask.Exception;
-                if (normalTask.Exception != null) throw normalTask.Exception;
-                if (lowTask.Exception != null) throw lowTask.Exception;
-                if (queue.Count > 0)
-                    dequeued.Add(queue.Dequeue());
+                Item item = null;
+                if (queue.TryDequeue(out item)) dequeued.Add(item);
             }
 
             sw.Stop();
             Console.WriteLine("Time elapsed: {0} ms.", sw.ElapsedMilliseconds);
+
+            if (highTask.Exception != null) throw highTask.Exception;
+            if (normalTask.Exception != null) throw normalTask.Exception;
+            if (lowTask.Exception != null) throw lowTask.Exception;
+
+            Console.WriteLine("queue.Count={0}", queue.Count);
+            Console.WriteLine("total={0}", total);
+            Console.WriteLine("dequeued.Count={0}", dequeued.Count);
 
             Assert.AreEqual(0, queue.Count, 0);
             Assert.AreNotEqual(total, dequeued.Count);
@@ -289,9 +294,60 @@ namespace QueueExtensions.UnitTests
         [TestCase]
         public void AdaptersParallelTest()
         {
-            var queue = new Queue<Item>();
-            var container = new DefaultQueueContainer<Item>(queue);
+            Queue<Item> queue = new Queue<Item>();
+            DefaultQueueContainer<Item> container = new DefaultQueueContainer<Item>(queue);
 
+            Item[] item = CreateItems(3);
+            var collectionItems = CreateItems(1000);
+            var listItems = CreateItems(1000);
+            var collection = new QueueCollectionAdapter<Item>(container);
+            var list = new QueueListAdapter<Item>(container);
+            var sw = Stopwatch.StartNew();
+
+            var addCollection = Task.Run(() =>
+            {
+                Console.WriteLine("addCollection ID#{0}", Thread.CurrentThread.ManagedThreadId);
+                for (int i = 0; i < collectionItems.Length; i++)
+                {
+                    collection.Add(collectionItems[i]);
+                }
+            });
+
+            var addList = Task.Run(() =>
+            {
+                Console.WriteLine("addList ID#{0}", Thread.CurrentThread.ManagedThreadId);
+                for (int i = 0; i < listItems.Length; i++)
+                {
+                    list.Add(listItems[i]);
+                }
+            });
+
+            var removeList = Task.Run(() =>
+            {
+                Console.WriteLine("removeList ID#{0}", Thread.CurrentThread.ManagedThreadId);
+                for (int i = 0; i < listItems.Length/2; i++)
+                {
+                    if (list.Count > 0)
+                        list.RemoveAt(i);
+                }
+            });
+
+            while (!addCollection.IsCompleted || !addList.IsCompleted || !removeList.IsCompleted)
+            {
+            }
+
+            sw.Stop();
+            Console.WriteLine("Time elapsed: {0} ms.", sw.ElapsedMilliseconds);
+
+            if (addCollection.Exception != null) throw addCollection.Exception;
+            if (addList.Exception != null) throw addList.Exception;
+            if (removeList.Exception != null) throw removeList.Exception;
+
+            Console.WriteLine("list.count={0}", list.Count);
+            Console.WriteLine("collection.Count()={0}", collection.Count());
+
+            Assert.AreEqual(list.Count, collection.Count(), 0);
+            Assert.AreNotEqual(collectionItems.Length + listItems.Length, list.Count);
         }
     }
 }
