@@ -17,10 +17,10 @@ The IQueueContainer<T> serves as a container for System.Collections.Generic.Queu
 * Do not forget to release SyncRoot.
 This ensures that queue will always be syncronized. There is a common-purpuse DefaultQueueContainer<T> for you to use.
 
-# Adapters for System.Collections.ICollection, System.Collections.Generic.ICollection<T> and System.Collections.Generic.IList<T>
-There is also adapter for generic (and non-generic) collections and list. They are usefull when it comes to treat System.Collections.Generic.Queue<T> as list or collection. You can add or remove items, get their indexes and remove items at specific index. While being synchronized inside, keep in mind that access to the adapter itself from different threads requires additional attention from programmer.
+# Adapters for ICollection, ICollection<T> and IList<T>
+There is also adapter for generic (and non-generic) collections and a list. They are usefull when it comes to treat System.Collections.Generic.Queue<T> as list or collection. You can add or remove items, get their indexes and remove items at specific index. While being synchronized inside, keep in mind that access to the adapter itself from different threads requires additional attention from programmer.
 
 # QueueAdapter<T>
 You can create your own adapter for System.Collections.Generic.Queue<T>. There is an abstact QueueAdapter<T> class with protected methods to manipulate queue stored inside the IQueueContainer<T>. All these methods are synchronized as well.
 
-- Sharkadi Andrey, 2016
+Sharkadi Andrey, 2016
