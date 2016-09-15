@@ -5,7 +5,7 @@ This repository contains specialized priority queue class and some extensions to
 * Unit tests.
 
 # Priority Queue
-The PriorityQueue<T> class has same methods signatures as System.Collections.Generic.Queue<T> class, but enqueued items have associated priority with them. When you call Enqueue, pass an item of type T and its priority (low, normal or high). When you dequeue item from priority queue, it will return items in specified order (by priority): high, normal, low.
+The PriorityQueue<T> class has same methods signatures as System.Collections.Generic.Queue<T> class, but enqueued items have associated priority with them. When you call Enqueue, pass an item of type T and its priority (low, normal or high). When you dequeue item from priority queue, it will return items in specified order (by priority): high, normal and low.
 It is also possible to convert priority queue to ICollection, ICollection<T> and IList<T>. Just use the respective extension methods. These wrappers are also syncronized.
 
 # IQueueContainer<T> and DefaultQueueContainer<T>
