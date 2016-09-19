@@ -22,5 +22,3 @@ There is also adapter for generic (and non-generic) collections and a list. They
 
 ## QueueAdapter<T>
 You can create your own adapter for System.Collections.Generic.Queue\<T\>. There is an abstact QueueAdapter\<T\> class with protected methods to manipulate queue stored inside the IQueueContainer\<T\>. All these methods are synchronized as well.
-
-**Sharkadi Andrey, 2016**
