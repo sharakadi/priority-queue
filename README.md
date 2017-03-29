@@ -1,5 +1,5 @@
 # Queue Extensions
-This repository contains specialized priority queue class and some extensions to .NET Framework Queue class.
+This repository contains specialized priority queue class and some extensions to .NET Framework Queue class and being used in my own projects.
 * High-efficient, synchronized priority queue (PriorityQueue\<T\>). High, low and normal item priority avaliable;
 * Collection and List adapters for System.Collections.Generic.Queue<T>;
 * Unit tests.
